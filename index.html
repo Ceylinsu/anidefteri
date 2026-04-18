@@ -3,449 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🚀 Bilişim Sergisi — Anı Defteri</title>
+  <title>Bilişim Sergisi — Anı Defteri</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ── TOKENS ─────────────────────────────────────── */
     :root {
-      --bg:       #0a0a12;
-      --surface:  #12121f;
-      --card:     #1a1a2e;
-      --border:   #2a2a45;
-      --accent:   #00f5c4;
-      --accent2:  #ff6b6b;
-      --accent3:  #ffd93d;
-      --text:     #e8e8f0;
-      --muted:    #6b6b8a;
-      --font-head: 'Syne', sans-serif;
-      --font-mono: 'Space Mono', monospace;
-      --radius:   12px;
+      --bg:#0a0a12; --surface:#12121f; --card:#1a1a2e; --border:#2a2a45;
+      --accent:#00f5c4; --accent2:#ff6b6b; --accent3:#ffd93d;
+      --text:#e8e8f0; --muted:#6b6b8a;
+      --font-head:'Syne',sans-serif; --font-mono:'Space Mono',monospace;
+      --radius:12px;
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-mono);min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.25;pointer-events:none;animation:gridDrift 20s linear infinite;}
+    @keyframes gridDrift{0%{background-position:0 0}100%{background-position:40px 40px}}
+    .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+    .glow-orb.g1{width:600px;height:600px;background:rgba(0,245,196,.06);top:-200px;left:-200px;animation:orbFloat1 12s ease-in-out infinite alternate;}
+    .glow-orb.g2{width:500px;height:500px;background:rgba(255,107,107,.05);bottom:-200px;right:-200px;animation:orbFloat2 15s ease-in-out infinite alternate;}
+    @keyframes orbFloat1{to{transform:translate(80px,60px)}}
+    @keyframes orbFloat2{to{transform:translate(-60px,-80px)}}
+    .container{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 20px 80px;}
 
-    /* ── RESET ──────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-mono);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    /* ── HEADER ── */
+    header{padding:48px 0 28px;text-align:center;}
+    .logo-wrap{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:20px;flex-wrap:wrap;}
+    .logo-img{width:72px;height:72px;object-fit:contain;border-radius:12px;}
+    .logo-text{text-align:left;}
+    .logo-text .org{font-family:var(--font-head);font-size:14px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase;}
+    .logo-text .sub{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+    .divider-logo{width:1px;height:44px;background:var(--border);}
+    .badge{display:inline-block;font-size:11px;letter-spacing:3px;color:var(--accent);border:1px solid var(--accent);padding:4px 14px;border-radius:99px;margin-bottom:14px;animation:pulse 3s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,245,196,.3)}50%{box-shadow:0 0 0 8px rgba(0,245,196,0)}}
+    h1{font-family:var(--font-head);font-size:clamp(1.8rem,5vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-1px;background:linear-gradient(135deg,var(--text) 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .subtitle{margin-top:10px;color:var(--muted);font-size:13px;letter-spacing:1px;}
 
-    /* ── ANIMATED BG GRID ───────────────────────────── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.3;
-      pointer-events: none;
-      animation: gridDrift 20s linear infinite;
-    }
-    @keyframes gridDrift {
-      0%   { background-position: 0 0; }
-      100% { background-position: 40px 40px; }
-    }
+    /* ── STATS ── */
+    .stats-bar{display:flex;gap:10px;justify-content:center;margin:22px 0;flex-wrap:wrap;}
+    .stat-chip{background:var(--card);border:1px solid var(--border);border-radius:99px;padding:5px 14px;font-size:12px;display:flex;align-items:center;gap:6px;}
+    .stat-chip span{color:var(--accent);font-weight:700;}
 
-    /* ── GLOW ───────────────────────────────────────── */
-    .glow-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(120px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .glow-orb.g1 {
-      width: 600px; height: 600px;
-      background: rgba(0,245,196,0.07);
-      top: -200px; left: -200px;
-      animation: orbFloat1 12s ease-in-out infinite alternate;
-    }
-    .glow-orb.g2 {
-      width: 500px; height: 500px;
-      background: rgba(255,107,107,0.06);
-      bottom: -200px; right: -200px;
-      animation: orbFloat2 15s ease-in-out infinite alternate;
-    }
-    @keyframes orbFloat1 { to { transform: translate(80px, 60px); } }
-    @keyframes orbFloat2 { to { transform: translate(-60px, -80px); } }
+    /* ── FORM ── */
+    .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:32px;position:relative;overflow:hidden;}
+    .form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));}
+    .form-title{font-family:var(--font-head);font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    @media(max-width:560px){.form-row{grid-template-columns:1fr}}
+    label{display:block;font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
+    input,textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical;}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,245,196,.1);}
+    select option{background:var(--card);}
+    textarea{min-height:88px;}
+    .emoji-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+    .emoji-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:18px;cursor:pointer;transition:all .15s;}
+    .emoji-btn:hover,.emoji-btn.active{border-color:var(--accent);background:rgba(0,245,196,.1);transform:scale(1.15);}
+    .stars{display:flex;gap:4px;margin-top:6px;}
+    .star{font-size:24px;cursor:pointer;transition:transform .15s;filter:grayscale(1) opacity(.35);}
+    .star.active,.star:hover{filter:none;transform:scale(1.2);}
+    .btn-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:12px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,245,196,.3);}
+    .btn-submit:active{transform:translateY(0);}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-    /* ── LAYOUT ─────────────────────────────────────── */
-    .container {
-      position: relative; z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-    }
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:28px;right:24px;background:var(--accent);color:var(--bg);padding:12px 18px;border-radius:8px;font-weight:700;font-size:13px;transform:translateY(100px);opacity:0;transition:all .3s ease;z-index:999;}
+    .toast.show{transform:translateY(0);opacity:1;}
 
-    /* ── HEADER ─────────────────────────────────────── */
-    header {
-      padding: 60px 0 40px;
-      text-align: center;
-    }
-    .badge {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 4px 14px;
-      border-radius: 99px;
-      margin-bottom: 20px;
-      animation: pulse 3s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(0,245,196,0.3); }
-      50%      { box-shadow: 0 0 0 8px rgba(0,245,196,0); }
-    }
-    h1 {
-      font-family: var(--font-head);
-      font-size: clamp(2rem, 6vw, 3.8rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .subtitle {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 14px;
-      letter-spacing: 1px;
-    }
+    /* ── FILTER ── */
+    .filter-bar{display:flex;gap:7px;align-items:center;margin-bottom:18px;flex-wrap:wrap;}
+    .filter-label{font-size:11px;color:var(--muted);letter-spacing:1px;}
+    .filter-btn{background:var(--card);border:1px solid var(--border);border-radius:99px;padding:5px 13px;font-family:var(--font-mono);font-size:11px;color:var(--text);cursor:pointer;transition:all .15s;}
+    .filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,245,196,.08);}
 
-    /* ── STATS BAR ──────────────────────────────────── */
-    .stats-bar {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      margin: 30px 0;
-      flex-wrap: wrap;
-    }
-    .stat-chip {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 6px 18px;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .stat-chip span { color: var(--accent); font-weight: 700; }
+    /* ── CARDS ── */
+    .cards-grid{display:grid;gap:13px;}
+    .yorum-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 20px 20px 22px;position:relative;overflow:hidden;animation:cardIn .4s ease both;transition:border-color .2s;}
+    @keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .yorum-card:hover{border-color:rgba(0,245,196,.2);}
+    .card-accent-bar{position:absolute;left:0;top:0;bottom:0;width:3px;}
+    .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;}
+    .card-avatar{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;font-family:var(--font-head);font-weight:800;}
+    .card-meta{flex:1;min-width:0;}
+    .card-name{font-family:var(--font-head);font-weight:700;font-size:14px;}
+    .card-info{display:flex;gap:7px;margin-top:3px;flex-wrap:wrap;align-items:center;}
+    .card-tag{font-size:10px;letter-spacing:.5px;color:var(--muted);}
+    .card-tag.role{color:var(--accent3);border:1px solid rgba(255,217,61,.25);padding:1px 7px;border-radius:99px;}
+    .card-stars{font-size:12px;white-space:nowrap;}
+    .card-text{font-size:13px;line-height:1.8;color:rgba(232,232,240,.82);padding-left:12px;border-left:2px solid var(--border);}
+    .card-emoji{position:absolute;right:16px;bottom:12px;font-size:24px;opacity:.32;pointer-events:none;}
 
-    /* ── FORM ───────────────────────────────────────── */
-    .form-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px;
-      margin-bottom: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-    .form-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
-    }
-    .form-title {
-      font-family: var(--font-head);
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .form-title .icon { font-size: 22px; }
+    /* ── ADMIN DELETE ── */
+    .btn-delete{position:absolute;top:12px;right:12px;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);color:#ff6b6b;border-radius:6px;padding:3px 9px;font-size:10px;font-family:var(--font-mono);cursor:pointer;transition:all .18s;display:none;z-index:5;}
+    .btn-delete:hover{background:rgba(255,107,107,.28);}
+    .admin-mode .btn-delete{display:block;}
+    .admin-mode .card-emoji{right:70px;}
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-    @media(max-width:560px){ .form-row { grid-template-columns: 1fr; } }
+    /* ── EMPTY / SPINNER ── */
+    .empty-state{text-align:center;padding:56px 20px;color:var(--muted);}
+    .empty-state .big{font-size:46px;margin-bottom:10px;}
+    .spinner{display:flex;justify-content:center;padding:40px;}
+    .spinner::after{content:'';width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    label {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-    }
-    input, textarea, select {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 14px;
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-      resize: vertical;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0,245,196,0.1);
-    }
-    textarea { min-height: 100px; }
+    /* ── SECTION TITLE ── */
+    .section-title{font-family:var(--font-head);font-size:19px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
 
-    /* EMOJI PICKER */
-    .emoji-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-    .emoji-btn {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 20px;
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .emoji-btn:hover, .emoji-btn.active {
-      border-color: var(--accent);
-      background: rgba(0,245,196,0.1);
-      transform: scale(1.15);
-    }
+    /* ── ADMIN BAR ── */
+    .admin-bar{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.28);border-radius:var(--radius);padding:14px 18px;margin-bottom:22px;display:none;}
+    .admin-bar.visible{display:block;}
+    .admin-bar-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+    .admin-title{font-size:12px;font-family:var(--font-head);font-weight:700;color:#ff6b6b;display:flex;align-items:center;gap:6px;}
+    .admin-actions{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn-reset{background:rgba(255,107,107,.18);border:1px solid rgba(255,107,107,.45);color:#ff6b6b;border-radius:7px;padding:6px 14px;font-size:11px;font-family:var(--font-mono);font-weight:700;cursor:pointer;transition:all .18s;}
+    .btn-reset:hover{background:rgba(255,107,107,.32);}
+    .btn-logout{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .18s;}
+    .btn-logout:hover{border-color:var(--muted);color:var(--text);}
 
-    /* RATING STARS */
-    .stars {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .star {
-      font-size: 28px;
-      cursor: pointer;
-      transition: transform .15s;
-      filter: grayscale(1) opacity(0.4);
-    }
-    .star.active, .star:hover { filter: none; transform: scale(1.2); }
+    /* ── MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;width:min(340px,90vw);position:relative;}
+    .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),var(--accent3));border-radius:16px 16px 0 0;}
+    .modal-title{font-family:var(--font-head);font-size:17px;font-weight:800;margin-bottom:18px;}
+    .modal input{margin-bottom:10px;}
+    .btn-modal-ok{width:100%;padding:11px;background:var(--accent2);color:#fff;border:none;border-radius:8px;font-family:var(--font-head);font-size:14px;font-weight:700;cursor:pointer;opacity:1;transition:opacity .18s;}
+    .btn-modal-ok:hover{opacity:.85;}
+    .modal-err{font-size:12px;color:var(--accent2);margin-top:7px;display:none;}
 
-    /* SUBMIT BTN */
-    .btn-submit {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px;
-      background: var(--accent);
-      color: var(--bg);
-      border: none;
-      border-radius: 8px;
-      font-family: var(--font-head);
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: transform .15s, box-shadow .15s;
-    }
-    .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,245,196,0.3);
-    }
-    .btn-submit:active { transform: translateY(0); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* SUCCESS TOAST */
-    .toast {
-      position: fixed; bottom: 30px; right: 30px;
-      background: var(--accent);
-      color: var(--bg);
-      padding: 14px 22px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all .3s ease;
-      z-index: 999;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-
-    /* ── FILTER BAR ─────────────────────────────────── */
-    .filter-bar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .filter-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
-    .filter-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 6px 16px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text);
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .filter-btn.active, .filter-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(0,245,196,0.08);
-    }
-
-    /* ── CARDS ──────────────────────────────────────── */
-    .cards-grid {
-      display: grid;
-      gap: 16px;
-    }
-    .yorum-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-      animation: cardIn .4s ease both;
-    }
-    @keyframes cardIn {
-      from { opacity:0; transform: translateY(16px); }
-      to   { opacity:1; transform: translateY(0); }
-    }
-    .yorum-card:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--border)); }
-
-    .card-accent-bar {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-    }
-    .card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .card-avatar {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-    .card-meta { flex: 1; }
-    .card-name {
-      font-family: var(--font-head);
-      font-weight: 700;
-      font-size: 16px;
-    }
-    .card-info {
-      display: flex;
-      gap: 10px;
-      margin-top: 3px;
-      flex-wrap: wrap;
-    }
-    .card-tag {
-      font-size: 10px;
-      letter-spacing: 1px;
-      color: var(--muted);
-    }
-    .card-tag.role {
-      color: var(--accent3);
-      border: 1px solid rgba(255,217,61,0.3);
-      padding: 2px 8px;
-      border-radius: 99px;
-    }
-    .card-stars { font-size: 14px; }
-    .card-text {
-      font-size: 14px;
-      line-height: 1.8;
-      color: rgba(232,232,240,0.85);
-      padding-left: 16px;
-      border-left: 2px solid var(--border);
-    }
-    .card-emoji {
-      position: absolute;
-      right: 20px; bottom: 16px;
-      font-size: 28px;
-      opacity: 0.4;
-    }
-
-    /* ── EMPTY STATE ────────────────────────────────── */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
-    }
-    .empty-state .big { font-size: 50px; margin-bottom: 12px; }
-    .empty-state p { font-size: 14px; }
-
-    /* ── LOADING ────────────────────────────────────── */
-    .spinner {
-      display: flex;
-      justify-content: center;
-      padding: 40px;
-    }
-    .spinner::after {
-      content: '';
-      width: 36px; height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── SECTION TITLE ──────────────────────────────── */
-    .section-title {
-      font-family: var(--font-head);
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* ── CONFIG WARNING ─────────────────────────────── */
-    .config-warning {
-      background: rgba(255,107,107,0.1);
-      border: 1px solid rgba(255,107,107,0.4);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-bottom: 30px;
-      font-size: 13px;
-      line-height: 1.8;
-    }
-    .config-warning strong { color: var(--accent2); display: block; margin-bottom: 6px; font-size: 15px; }
-    .config-warning code {
-      background: var(--bg);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      color: var(--accent);
-    }
+    /* ── ADMIN TRIGGER ── */
+    .admin-trigger{position:fixed;bottom:18px;left:18px;z-index:50;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:7px 14px;font-size:10px;font-family:var(--font-mono);color:var(--muted);cursor:pointer;transition:all .18s;}
+    .admin-trigger:hover{color:var(--accent2);border-color:rgba(255,107,107,.4);}
   </style>
 </head>
 <body>
@@ -453,40 +142,59 @@
 <div class="glow-orb g1"></div>
 <div class="glow-orb g2"></div>
 
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">🔐 Yönetici Girişi</div>
+    <label>Şifre</label>
+    <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()" />
+    <div class="modal-err" id="modalErr">❌ Yanlış şifre, tekrar deneyin.</div>
+    <button class="btn-modal-ok" onclick="adminLogin()">Giriş Yap</button>
+  </div>
+</div>
+
 <div class="container">
 
-  <!-- ── HEADER ── -->
+  <!-- HEADER -->
   <header>
-    <div class="badge">BİLİŞİM SERGİSİ 2025</div>
-    <h1>Anı Defteri</h1>
+    <div class="logo-wrap">
+      <img class="logo-img" id="logoImg" alt="Küçükçekmece Belediyesi" />
+      <div class="divider-logo"></div>
+      <div class="logo-text">
+        <div class="org">Küçükçekmece Belediyesi</div>
+        <div class="sub">Bilişim Sergisi 2026</div>
+      </div>
+    </div>
+    <div class="badge">ANI DEFTERİ</div>
+    <h1>Ziyaretçi Yorumları</h1>
     <p class="subtitle">Sergimizi ziyaret ettiğiniz için teşekkürler — düşüncelerinizi bırakın!</p>
   </header>
 
   <!-- STATS -->
   <div class="stats-bar">
-    <div class="stat-chip">👥 Toplam Ziyaretçi: <span id="totalCount">—</span></div>
-    <div class="stat-chip">⭐ Ortalama Puan: <span id="avgRating">—</span></div>
-    <div class="stat-chip">🕐 Son Yorum: <span id="lastTime">—</span></div>
+    <div class="stat-chip">👥 Toplam: <span id="totalCount">—</span></div>
+    <div class="stat-chip">⭐ Ortalama: <span id="avgRating">—</span></div>
+    <div class="stat-chip">🕐 Son yorum: <span id="lastTime">—</span></div>
   </div>
 
-  <!-- CONFIG WARNING (only shows when not configured) -->
-  <div class="config-warning" id="configWarning" style="display:none">
-    <strong>⚠️ Yapılandırma Gerekli</strong>
-    Bu siteyi çalıştırmak için <code>JSONBIN_BIN_ID</code> ve <code>JSONBIN_API_KEY</code> değerlerini
-    aşağıdaki script bölümünde güncellemeniz gerekiyor.
-    JSONBin.io'dan ücretsiz hesap açıp Bin ID ve Master Key'i alın.
-  </div>
-
-  <!-- ── FORM ── -->
-  <div class="form-card">
-    <div class="form-title">
-      <span class="icon">✍️</span> Yorumunuzu Bırakın
+  <!-- ADMIN BAR -->
+  <div class="admin-bar" id="adminBar">
+    <div class="admin-bar-inner">
+      <div class="admin-title">🛡️ Yönetici modu aktif — kartlardaki ✕ ile yorum sil</div>
+      <div class="admin-actions">
+        <button class="btn-reset" onclick="tumunuSifirla()">🗑️ Tüm Yorumları Sıfırla</button>
+        <button class="btn-logout" onclick="adminCikis()">Çıkış Yap</button>
+      </div>
     </div>
+  </div>
 
+  <!-- FORM -->
+  <div class="form-card">
+    <div class="form-title">✍️ Yorumunuzu Bırakın</div>
     <div class="form-row">
       <div>
         <label>Adınız</label>
-        <input id="inputAd" type="text" placeholder="Adınız Soyadınız" maxlength="50" />
+        <input id="inputAd" type="text" placeholder="Ad Soyad" maxlength="50" />
       </div>
       <div>
         <label>Rolünüz</label>
@@ -500,8 +208,7 @@
         </select>
       </div>
     </div>
-
-    <div style="margin-bottom:14px">
+    <div style="margin-bottom:12px">
       <label>Sergiyi Değerlendirin</label>
       <div class="stars" id="starsContainer">
         <span class="star" data-val="1">⭐</span>
@@ -511,18 +218,14 @@
         <span class="star" data-val="5">⭐</span>
       </div>
     </div>
-
-    <div style="margin-bottom:14px">
+    <div style="margin-bottom:12px">
       <label>Mesajınız</label>
       <textarea id="inputMesaj" placeholder="Sergi hakkında düşüncelerinizi paylaşın..." maxlength="500"></textarea>
-      <div style="text-align:right; font-size:11px; color:var(--muted); margin-top:4px">
-        <span id="charCount">0</span>/500
-      </div>
+      <div style="text-align:right;font-size:10px;color:var(--muted);margin-top:3px"><span id="charCount">0</span>/500</div>
     </div>
-
-    <div style="margin-bottom:6px">
+    <div>
       <label>Duygu Durumunuz</label>
-      <div class="emoji-row" id="emojiRow">
+      <div class="emoji-row">
         <button class="emoji-btn" data-emoji="🤩">🤩</button>
         <button class="emoji-btn" data-emoji="😊">😊</button>
         <button class="emoji-btn" data-emoji="🤔">🤔</button>
@@ -533,252 +236,271 @@
         <button class="emoji-btn" data-emoji="❤️">❤️</button>
       </div>
     </div>
-
-    <button class="btn-submit" id="btnGonder" onclick="yorumGonder()">
-      💬 Yorumu Gönder
-    </button>
+    <button class="btn-submit" id="btnGonder" onclick="yorumGonder()">💬 Yorumu Gönder</button>
   </div>
 
-  <!-- ── YORUMLAR ── -->
+  <!-- YORUMLAR -->
   <div class="section-title">Ziyaretçi Yorumları</div>
-
   <div class="filter-bar">
     <span class="filter-label">FİLTRE:</span>
-    <button class="filter-btn active" onclick="filterYorumlar('tumu', this)">Tümü</button>
-    <button class="filter-btn" onclick="filterYorumlar('Öğrenci', this)">👩‍🎓 Öğrenci</button>
-    <button class="filter-btn" onclick="filterYorumlar('Öğretmen', this)">👩‍🏫 Öğretmen</button>
-    <button class="filter-btn" onclick="filterYorumlar('Veli', this)">👨‍👩‍👧 Veli</button>
-    <button class="filter-btn" onclick="filterYorumlar('5yildiz', this)">⭐ 5 Yıldız</button>
+    <button class="filter-btn active" onclick="filterYorumlar('tumu',this)">Tümü</button>
+    <button class="filter-btn" onclick="filterYorumlar('Öğrenci',this)">👩‍🎓 Öğrenci</button>
+    <button class="filter-btn" onclick="filterYorumlar('Öğretmen',this)">👩‍🏫 Öğretmen</button>
+    <button class="filter-btn" onclick="filterYorumlar('Veli',this)">👨‍👩‍👧 Veli</button>
+    <button class="filter-btn" onclick="filterYorumlar('5yildiz',this)">⭐ 5 Yıldız</button>
   </div>
-
-  <div id="yorumContainer">
-    <div class="spinner"></div>
-  </div>
+  <div id="yorumContainer"><div class="spinner"></div></div>
 
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">✅ Yorumunuz eklendi!</div>
+<div class="toast" id="toast"></div>
+<button class="admin-trigger" onclick="openAdminModal()">⚙ YÖNETİCİ</button>
 
 <script>
-  // ═══════════════════════════════════════════════════════
-  //  🔧 BURAYA JSONBin.io BİLGİLERİNİZİ YAZIN
-  // ═══════════════════════════════════════════════════════
   const JSONBIN_BIN_ID  = "69e3d53faaba88219712c8b0";
   const JSONBIN_API_KEY = "$2a$10$GUfuvvYMEDsfEoYbSQP.sevnvChH1GLS3IsH0DP9T/nAJUhLidy1C";
-  // ═══════════════════════════════════════════════════════
+  const ADMIN_SIFRE     = "bilisim2026";
 
-  const BASE_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+  const BASE_URL = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
   const HEADERS  = {
     "Content-Type": "application/json",
     "X-Master-Key": JSONBIN_API_KEY,
     "X-Bin-Versioning": "false"
   };
 
-  let seciliPuan  = 0;
-  let seciliEmoji = "";
-  let tumYorumlar = [];
-  let aktifFilter = "tumu";
+  let seciliPuan = 0, seciliEmoji = "", tumYorumlar = [], aktifFilter = "tumu", adminMod = false;
 
+  // Logo — inline via JS to avoid HTML escaping issues
+  document.getElementById("logoImg").src = "data:image/png;base64,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";
 
-
-  // ── Stars ─────────────────────────────────────────────
-  document.querySelectorAll(".star").forEach(s => {
-    s.addEventListener("click", () => {
-      seciliPuan = +s.dataset.val;
-      document.querySelectorAll(".star").forEach((st, i) => {
+  // Stars
+  document.querySelectorAll(".star").forEach(function(s) {
+    s.addEventListener("click", function() {
+      seciliPuan = parseInt(s.dataset.val);
+      document.querySelectorAll(".star").forEach(function(st, i) {
         st.classList.toggle("active", i < seciliPuan);
       });
     });
   });
 
-  // ── Emoji ─────────────────────────────────────────────
-  document.querySelectorAll(".emoji-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const e = btn.dataset.emoji;
-      seciliEmoji = seciliEmoji === e ? "" : e;
-      document.querySelectorAll(".emoji-btn").forEach(b =>
-        b.classList.toggle("active", b.dataset.emoji === seciliEmoji)
-      );
+  // Emoji
+  document.querySelectorAll(".emoji-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var e = btn.dataset.emoji;
+      seciliEmoji = (seciliEmoji === e) ? "" : e;
+      document.querySelectorAll(".emoji-btn").forEach(function(b) {
+        b.classList.toggle("active", b.dataset.emoji === seciliEmoji);
+      });
     });
   });
 
-  // ── Char counter ─────────────────────────────────────
-  document.getElementById("inputMesaj").addEventListener("input", e => {
+  // Char counter
+  document.getElementById("inputMesaj").addEventListener("input", function(e) {
     document.getElementById("charCount").textContent = e.target.value.length;
   });
 
-  // ── Colors for cards ─────────────────────────────────
-  const COLORS = ["#00f5c4","#ff6b6b","#ffd93d","#a78bfa","#38bdf8","#fb923c"];
-  const pickColor = (str) => COLORS[str.charCodeAt(0) % COLORS.length];
-  const pickBg    = (col) => col + "22";
-  const starStr   = (n)   => "⭐".repeat(n) + "☆".repeat(5-n);
-  const timeAgo   = (ts)  => {
-    const d = (Date.now() - ts) / 1000;
-    if (d < 60)    return "az önce";
-    if (d < 3600)  return `${Math.floor(d/60)} dk önce`;
-    if (d < 86400) return `${Math.floor(d/3600)} sa önce`;
+  var COLORS = ["#00f5c4","#ff6b6b","#ffd93d","#a78bfa","#38bdf8","#fb923c"];
+  function pickColor(str) { return COLORS[str.charCodeAt(0) % COLORS.length]; }
+  function starStr(n) { return "⭐".repeat(n) + "☆".repeat(5 - n); }
+  function escHtml(str) {
+    return (str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  function timeAgo(ts) {
+    var d = (Date.now() - ts) / 1000;
+    if (d < 60) return "az önce";
+    if (d < 3600) return Math.floor(d/60) + " dk önce";
+    if (d < 86400) return Math.floor(d/3600) + " sa önce";
     return new Date(ts).toLocaleDateString("tr-TR");
-  };
-
-  // ── Render card ───────────────────────────────────────
-  function renderCard(y, delay=0) {
-    const col  = pickColor(y.ad || "A");
-    const bg   = pickBg(col);
-    const init = (y.ad || "?")[0].toUpperCase();
-    return `
-      <div class="yorum-card" style="animation-delay:${delay}ms">
-        <div class="card-accent-bar" style="background:${col}"></div>
-        <div class="card-header">
-          <div class="card-avatar" style="background:${bg}; color:${col}">${init}</div>
-          <div class="card-meta">
-            <div class="card-name">${escHtml(y.ad)}</div>
-            <div class="card-info">
-              ${y.rol ? `<span class="card-tag role">${y.rol}</span>` : ""}
-              <span class="card-tag">${timeAgo(y.zaman)}</span>
-            </div>
-          </div>
-          <div class="card-stars">${y.puan ? starStr(y.puan) : ""}</div>
-        </div>
-        <p class="card-text">${escHtml(y.mesaj)}</p>
-        ${y.emoji ? `<div class="card-emoji">${y.emoji}</div>` : ""}
-      </div>`;
   }
 
-  function escHtml(str="") {
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  function renderCard(y, realIdx, delay) {
+    var col = pickColor(y.ad || "A");
+    var bg = col + "22";
+    var init = (y.ad || "?")[0].toUpperCase();
+    return '<div class="yorum-card" style="animation-delay:' + delay + 'ms">' +
+      '<div class="card-accent-bar" style="background:' + col + '"></div>' +
+      '<button class="btn-delete" onclick="yorumSil(' + realIdx + ')" title="Yorumu Sil">✕ Sil</button>' +
+      '<div class="card-header">' +
+        '<div class="card-avatar" style="background:' + bg + ';color:' + col + '">' + init + '</div>' +
+        '<div class="card-meta">' +
+          '<div class="card-name">' + escHtml(y.ad) + '</div>' +
+          '<div class="card-info">' +
+            (y.rol ? '<span class="card-tag role">' + y.rol + '</span>' : '') +
+            '<span class="card-tag">' + timeAgo(y.zaman) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-stars">' + (y.puan ? starStr(y.puan) : "") + '</div>' +
+      '</div>' +
+      '<p class="card-text">' + escHtml(y.mesaj) + '</p>' +
+      (y.emoji ? '<div class="card-emoji">' + y.emoji + '</div>' : '') +
+    '</div>';
   }
 
-  // ── Render list ───────────────────────────────────────
   function renderList(yorumlar) {
-    const el = document.getElementById("yorumContainer");
+    var el = document.getElementById("yorumContainer");
     if (!yorumlar.length) {
-      el.innerHTML = `
-        <div class="empty-state">
-          <div class="big">📭</div>
-          <p>Henüz bu filtrede yorum yok.</p>
-        </div>`;
+      el.innerHTML = '<div class="empty-state"><div class="big">📭</div><p>Henüz yorum yok.</p></div>';
       return;
     }
-    el.innerHTML = `<div class="cards-grid">${
-      [...yorumlar].reverse().map((y,i) => renderCard(y, i*60)).join("")
-    }</div>`;
+    var reversed = yorumlar.slice().reverse();
+    var html = '<div class="cards-grid">';
+    for (var i = 0; i < reversed.length; i++) {
+      var y = reversed[i];
+      var realIdx = tumYorumlar.indexOf(y);
+      html += renderCard(y, realIdx, i * 50);
+    }
+    html += '</div>';
+    el.innerHTML = html;
+    if (adminMod) document.querySelector(".container").classList.add("admin-mode");
   }
 
-  // ── Filter ───────────────────────────────────────────
   function filterYorumlar(fil, btn) {
     aktifFilter = fil;
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".filter-btn").forEach(function(b) { b.classList.remove("active"); });
     btn.classList.add("active");
-
-    let liste = tumYorumlar;
-    if (fil === "5yildiz") liste = liste.filter(y => y.puan === 5);
-    else if (fil !== "tumu") liste = liste.filter(y => y.rol === fil);
+    var liste = tumYorumlar;
+    if (fil === "5yildiz") liste = liste.filter(function(y) { return y.puan === 5; });
+    else if (fil !== "tumu") liste = liste.filter(function(y) { return y.rol === fil; });
     renderList(liste);
   }
 
-  // ── Stats ─────────────────────────────────────────────
   function updateStats() {
     document.getElementById("totalCount").textContent = tumYorumlar.length;
-
-    const puanlilar = tumYorumlar.filter(y => y.puan);
-    if (puanlilar.length) {
-      const ort = puanlilar.reduce((s,y)=>s+y.puan,0) / puanlilar.length;
+    var p = tumYorumlar.filter(function(y) { return y.puan; });
+    if (p.length) {
+      var ort = p.reduce(function(s, y) { return s + y.puan; }, 0) / p.length;
       document.getElementById("avgRating").textContent = ort.toFixed(1) + " ⭐";
     } else {
       document.getElementById("avgRating").textContent = "—";
     }
-
     if (tumYorumlar.length) {
-      const son = Math.max(...tumYorumlar.map(y=>y.zaman));
+      var son = Math.max.apply(null, tumYorumlar.map(function(y) { return y.zaman; }));
       document.getElementById("lastTime").textContent = timeAgo(son);
     }
   }
 
-  // ── Load data ─────────────────────────────────────────
   async function yukle() {
     try {
-      const res  = await fetch(BASE_URL + "/latest", { headers: HEADERS });
-      const data = await res.json();
-      tumYorumlar = data.record?.yorumlar || [];
+      var res = await fetch(BASE_URL + "/latest", { headers: HEADERS });
+      var data = await res.json();
+      tumYorumlar = (data.record && data.record.yorumlar) ? data.record.yorumlar : [];
       updateStats();
       renderList(tumYorumlar);
     } catch(e) {
-      document.getElementById("yorumContainer").innerHTML = `
-        <div class="empty-state">
-          <div class="big">⚠️</div>
-          <p>Veriler yüklenemedi. API Key veya Bin ID'yi kontrol edin.</p>
-        </div>`;
+      document.getElementById("yorumContainer").innerHTML =
+        '<div class="empty-state"><div class="big">⚠️</div><p>Veriler yüklenemedi. Lütfen sayfayı yenileyin.</p></div>';
     }
   }
 
-  // ── Submit ────────────────────────────────────────────
+  async function kaydet(liste) {
+    await fetch(BASE_URL, {
+      method: "PUT",
+      headers: HEADERS,
+      body: JSON.stringify({ yorumlar: liste })
+    });
+    tumYorumlar = liste;
+    updateStats();
+  }
+
   async function yorumGonder() {
-    const ad     = document.getElementById("inputAd").value.trim();
-    const rol    = document.getElementById("inputRol").value;
-    const mesaj  = document.getElementById("inputMesaj").value.trim();
-
-    if (!ad)    return alert("Lütfen adınızı girin.");
-    if (!mesaj) return alert("Lütfen bir mesaj yazın.");
-
-    const btn = document.getElementById("btnGonder");
+    var ad    = document.getElementById("inputAd").value.trim();
+    var rol   = document.getElementById("inputRol").value;
+    var mesaj = document.getElementById("inputMesaj").value.trim();
+    if (!ad)    { alert("Lütfen adınızı girin."); return; }
+    if (!mesaj) { alert("Lütfen bir mesaj yazın."); return; }
+    var btn = document.getElementById("btnGonder");
     btn.disabled = true;
     btn.textContent = "⏳ Gönderiliyor...";
-
-    const yeniYorum = {
-      ad, rol, mesaj,
-      puan:  seciliPuan || 0,
-      emoji: seciliEmoji,
-      zaman: Date.now()
-    };
-
+    var yeni = { ad: ad, rol: rol, mesaj: mesaj, puan: seciliPuan || 0, emoji: seciliEmoji, zaman: Date.now() };
     try {
-      // fetch current
-      const res1 = await fetch(BASE_URL + "/latest", { headers: HEADERS });
-      const data = await res1.json();
-      const liste = data.record?.yorumlar || [];
-      liste.push(yeniYorum);
-
-      // update
-      await fetch(BASE_URL, {
-        method: "PUT",
-        headers: HEADERS,
-        body: JSON.stringify({ yorumlar: liste })
-      });
-
-      tumYorumlar = liste;
-      updateStats();
-      renderList(tumYorumlar);
-
-      // reset form
+      var res  = await fetch(BASE_URL + "/latest", { headers: HEADERS });
+      var data = await res.json();
+      var liste = ((data.record && data.record.yorumlar) ? data.record.yorumlar : []).concat([yeni]);
+      await kaydet(liste);
+      var filListe = tumYorumlar;
+      if (aktifFilter === "5yildiz") filListe = filListe.filter(function(y) { return y.puan === 5; });
+      else if (aktifFilter !== "tumu") filListe = filListe.filter(function(y) { return y.rol === aktifFilter; });
+      renderList(filListe);
       document.getElementById("inputAd").value = "";
       document.getElementById("inputRol").value = "";
       document.getElementById("inputMesaj").value = "";
       document.getElementById("charCount").textContent = "0";
-      seciliPuan = 0;
-      seciliEmoji = "";
-      document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
-      document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
-
+      seciliPuan = 0; seciliEmoji = "";
+      document.querySelectorAll(".star").forEach(function(s) { s.classList.remove("active"); });
+      document.querySelectorAll(".emoji-btn").forEach(function(b) { b.classList.remove("active"); });
       showToast("✅ Yorumunuz eklendi!");
     } catch(e) {
-      alert("Hata oluştu: " + e.message);
+      alert("Hata oluştu, tekrar deneyin.");
     } finally {
       btn.disabled = false;
       btn.textContent = "💬 Yorumu Gönder";
     }
   }
 
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 3000);
+  async function yorumSil(idx) {
+    if (!adminMod) return;
+    if (!confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
+    var liste = tumYorumlar.filter(function(_, i) { return i !== idx; });
+    await kaydet(liste);
+    var filListe = tumYorumlar;
+    if (aktifFilter === "5yildiz") filListe = filListe.filter(function(y) { return y.puan === 5; });
+    else if (aktifFilter !== "tumu") filListe = filListe.filter(function(y) { return y.rol === aktifFilter; });
+    renderList(filListe);
+    showToast("🗑️ Yorum silindi.");
   }
 
-  // ── Init ──────────────────────────────────────────────
+  async function tumunuSifirla() {
+    if (!adminMod) return;
+    if (!confirm("TÜM yorumları silmek istediğinize emin misiniz?\nBu işlem geri alınamaz!")) return;
+    if (!confirm("Son onay: Tüm veriler silinecek. Devam edilsin mi?")) return;
+    await kaydet([]);
+    renderList([]);
+    showToast("♻️ Tüm yorumlar sıfırlandı.");
+  }
+
+  function openAdminModal() {
+    document.getElementById("modalOverlay").classList.add("open");
+    setTimeout(function() { document.getElementById("adminPass").focus(); }, 100);
+  }
+
+  function adminLogin() {
+    var sifre = document.getElementById("adminPass").value;
+    if (sifre === ADMIN_SIFRE) {
+      adminMod = true;
+      document.getElementById("modalOverlay").classList.remove("open");
+      document.getElementById("adminBar").classList.add("visible");
+      document.querySelector(".container").classList.add("admin-mode");
+      document.getElementById("adminPass").value = "";
+      document.getElementById("modalErr").style.display = "none";
+      renderList(tumYorumlar);
+      showToast("🛡️ Yönetici moduna geçildi.");
+    } else {
+      document.getElementById("modalErr").style.display = "block";
+      document.getElementById("adminPass").value = "";
+      document.getElementById("adminPass").focus();
+    }
+  }
+
+  function adminCikis() {
+    adminMod = false;
+    document.getElementById("adminBar").classList.remove("visible");
+    document.querySelector(".container").classList.remove("admin-mode");
+    renderList(tumYorumlar);
+    showToast("👋 Yönetici modundan çıkıldı.");
+  }
+
+  document.getElementById("modalOverlay").addEventListener("click", function(e) {
+    if (e.target === this) this.classList.remove("open");
+  });
+
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(function() { t.classList.remove("show"); }, 3000);
+  }
+
   yukle();
 </script>
 </body>
 </html>
-
