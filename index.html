@@ -1,85 +1,159 @@
-<div id="guestbook-container" style="max-width: 700px; margin: 0 auto; padding: 20px;">
-    <h2 style="text-align: center;">Sergi Hakkındaki Düşünceleriniz</h2>
-    
-    <div style="margin-bottom: 15px;">
-        <input type="text" id="nameInput" placeholder="Adınız Soyadınız" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
-        <textarea id="messageInput" rows="4" placeholder="Sergiyle ilgili yorumunuzu buraya yazın..." required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
-    </div>
-    
-    <button id="submitBtn" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold;">Yorumu Bırak</button>
-
-    <div id="comments-section" style="margin-top: 40px;">
-        <h3>Ziyaretçi Yorumları</h3>
-        <div id="commentsList">
-            </div>
-    </div>
-</div>
-
-<script type="module">
-    // Firebase kütüphanelerini çağırıyoruz
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
-    // DİKKAT: Buradaki bilgileri kendi Firebase projenden alıp değiştirmelisin
-    const firebaseConfig = {
-        apiKey: "SENIN_API_ANAHTARIN",
-        authDomain: "proje-adin.firebaseapp.com",
-        databaseURL: "https://proje-adin-default-rtdb.firebaseio.com",
-        projectId: "proje-adin",
-        storageBucket: "proje-adin.appspot.com",
-        messagingSenderId: "SENDER_ID",
-        appId: "APP_ID"
-    };
-
-    // Veritabanını başlat
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const nameInput = document.getElementById('nameInput');
-    const messageInput = document.getElementById('messageInput');
-    const submitBtn = document.getElementById('submitBtn');
-    const commentsList = document.getElementById('commentsList');
-
-    // Butona tıklandığında veriyi gönder
-    submitBtn.addEventListener('click', () => {
-        const name = nameInput.value.trim();
-        const message = messageInput.value.trim();
-
-        if(name !== "" && message !== "") {
-            push(ref(db, 'sergi_yorumlari'), {
-                name: name,
-                message: message,
-                timestamp: Date.now()
-            });
-            nameInput.value = ''; // Kutuları temizle
-            messageInput.value = '';
-        } else {
-            alert("Lütfen adınızı ve mesajınızı eksiksiz girin!");
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilişim Sergisi Anı Defteri</title>
+    <style>
+        /* TASARIM AYARLARI */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f3;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
         }
-    });
-
-    // Yorumları anlık olarak ekrana çek ve yazdır
-    onValue(ref(db, 'sergi_yorumlari'), (snapshot) => {
-        commentsList.innerHTML = ''; // Önce listeyi temizle
-        const data = snapshot.val();
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        header { text-align: center; margin-bottom: 25px; }
+        h1 { color: #2c3e50; font-size: 24px; margin-bottom: 8px; }
+        p.subtitle { color: #7f8c8d; font-size: 14px; }
         
-        if(data) {
-            // Yeni yorumlar en üstte görünsün
-            const commentsArray = Object.entries(data).reverse();
-            commentsArray.forEach(([id, comment]) => {
-                const date = new Date(comment.timestamp).toLocaleDateString('tr-TR');
-                
-                // Mevcut sitenin temasını bozmayacak, şeffaf/hafif çerçeveli yorum kartları
-                commentsList.innerHTML += `
-                    <div style="background: rgba(0,0,0,0.03); padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #007bff;">
-                        <div style="font-weight: bold; margin-bottom: 5px;">${comment.name}</div>
-                        <div style="font-size: 0.8em; color: #666; margin-bottom: 10px;">${date}</div>
-                        <div style="line-height: 1.5;">${comment.message}</div>
-                    </div>
-                `;
-            });
-        } else {
-            commentsList.innerHTML = '<p>Henüz yorum yapılmamış. İlk düşünceyi sen paylaş!</p>';
+        form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 35px; }
+        input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #edeff0; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            transition: border-color 0.3s;
+            box-sizing: border-box;
         }
-    });
-</script>
+        input:focus, textarea:focus { border-color: #3498db; outline: none; }
+        
+        button { 
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600; 
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+        
+        #comments-list { margin-top: 20px; }
+        .comment-card { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            border-left: 5px solid #3498db;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .comment-card h4 { margin: 0 0 5px 0; font-size: 16px; color: #2c3e50; }
+        .comment-card span { font-size: 11px; color: #95a5a6; font-weight: normal; }
+        .comment-card p { margin: 0; font-size: 14px; color: #555; line-height: 1.5; }
+        .no-comment { text-align: center; color: #bdc3c7; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🚀 Bilişim Sergisi</h1>
+            <p class="subtitle">Dijital Anı Defterine Hoş Geldiniz</p>
+        </header>
+
+        <form id="comment-form">
+            <input type="text" id="name" placeholder="Adınız Soyadınız" required>
+            <textarea id="message" placeholder="Sergimiz hakkındaki yorumunuz..." rows="3" required></textarea>
+            <button type="submit">Mesajı Gönder</button>
+        </form>
+
+        <hr style="border: 0; height: 1px; background: #eee;">
+
+        <div id="comments-section">
+            <h2 style="font-size: 18px; color: #2c3e50;">Ziyaretçi Notları</h2>
+            <div id="comments-list">
+                <p class="no-comment">Notlar yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Senin sağladığın Firebase yapılandırması
+        const firebaseConfig = {
+          apiKey: "AIzaSyC9RHNX5sSnAFq8-kHVht4T97I5nrB8S-k",
+          authDomain: "hatira-e7d4c.firebaseapp.com",
+          projectId: "hatira-e7d4c",
+          storageBucket: "hatira-e7d4c.firebasestorage.app",
+          messagingSenderId: "718092389367",
+          appId: "1:718092389367:web:c5d694aa767f871cc97cf2",
+          // Not: Realtime Database kullandığımız için databaseURL gerekebilir. 
+          // Eğer hata alırsan Firebase panelinden databaseURL'yi buraya ekleyebilirsin.
+          databaseURL: "https://hatira-e7d4c-default-rtdb.firebaseio.com" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const commentsRef = ref(db, 'ziyaretci_notlari');
+
+        const form = document.getElementById('comment-form');
+        const commentsList = document.getElementById('comments-list');
+
+        // Formu Gönderince Veritabanına Yaz
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nameVal = document.getElementById('name').value;
+            const messageVal = document.getElementById('message').value;
+
+            push(commentsRef, {
+                name: nameVal,
+                message: messageVal,
+                date: new Date().toLocaleString('tr-TR')
+            });
+
+            form.reset();
+            alert("Harika! Notun anı defterine eklendi.");
+        });
+
+        // Veritabanından Verileri Çek ve Listele
+        onValue(commentsRef, (snapshot) => {
+            commentsList.innerHTML = '';
+            const data = snapshot.val();
+
+            if (data) {
+                // Mesajları diziye çevirip en yeni en üstte olacak şekilde sırala
+                const entries = Object.values(data).reverse();
+                entries.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'comment-card';
+                    div.innerHTML = `
+                        <h4>${item.name} <span>• ${item.date}</span></h4>
+                        <p>${item.message}</p>
+                    `;
+                    commentsList.appendChild(div);
+                });
+            } else {
+                commentsList.innerHTML = '<p class="no-comment">Henüz hiç not bırakılmamış. İlk yazan sen ol!</p>';
+            }
+        });
+    </script>
+</body>
+</html>
