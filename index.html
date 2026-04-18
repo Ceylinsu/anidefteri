@@ -1,159 +1,85 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilişim Sergisi - Anı Defteri</title>
+<div id="guestbook-container" style="max-width: 700px; margin: 0 auto; padding: 20px;">
+    <h2 style="text-align: center;">Sergi Hakkındaki Düşünceleriniz</h2>
     
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-        }
-
-        .form-section {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        .messages-section h2 {
-            margin-bottom: 20px;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-
-        .message-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-            border-left: 5px solid #3498db;
-        }
-
-        .message-header {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-
-        .message-date {
-            font-size: 0.8rem;
-            color: #7f8c8d;
-            float: right;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Sergi Anı Defteri 🚀</h1>
-            <p>Bilişim sergimizi gezdikten sonraki düşüncelerinizi bizimle paylaşın!</p>
-        </header>
-
-        <section class="form-section">
-            <form id="guestbook-form">
-                <input type="text" id="visitor-name" placeholder="Adınız Soyadınız" required>
-                <textarea id="visitor-message" placeholder="Sergi hakkındaki düşünceleriniz..." rows="4" required></textarea>
-                <button type="submit">Mesajımı Bırak</button>
-            </form>
-        </section>
-
-        <section class="messages-section">
-            <h2>Ziyaretçi Yorumları</h2>
-            <div id="messages-container">
-                </div>
-        </section>
+    <div style="margin-bottom: 15px;">
+        <input type="text" id="nameInput" placeholder="Adınız Soyadınız" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        <textarea id="messageInput" rows="4" placeholder="Sergiyle ilgili yorumunuzu buraya yazın..." required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
     </div>
+    
+    <button id="submitBtn" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; width: 100%; font-size: 16px; font-weight: bold;">Yorumu Bırak</button>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('guestbook-form');
-            const messagesContainer = document.getElementById('messages-container');
+    <div id="comments-section" style="margin-top: 40px;">
+        <h3>Ziyaretçi Yorumları</h3>
+        <div id="commentsList">
+            </div>
+    </div>
+</div>
 
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); 
+<script type="module">
+    // Firebase kütüphanelerini çağırıyoruz
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-                const nameInput = document.getElementById('visitor-name').value;
-                const messageInput = document.getElementById('visitor-message').value;
-                const date = new Date().toLocaleDateString('tr-TR');
+    // DİKKAT: Buradaki bilgileri kendi Firebase projenden alıp değiştirmelisin
+    const firebaseConfig = {
+        apiKey: "SENIN_API_ANAHTARIN",
+        authDomain: "proje-adin.firebaseapp.com",
+        databaseURL: "https://proje-adin-default-rtdb.firebaseio.com",
+        projectId: "proje-adin",
+        storageBucket: "proje-adin.appspot.com",
+        messagingSenderId: "SENDER_ID",
+        appId: "APP_ID"
+    };
 
-                addMessageToDOM(nameInput, messageInput, date);
+    // Veritabanını başlat
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-                form.reset();
+    const nameInput = document.getElementById('nameInput');
+    const messageInput = document.getElementById('messageInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const commentsList = document.getElementById('commentsList');
+
+    // Butona tıklandığında veriyi gönder
+    submitBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim();
+        const message = messageInput.value.trim();
+
+        if(name !== "" && message !== "") {
+            push(ref(db, 'sergi_yorumlari'), {
+                name: name,
+                message: message,
+                timestamp: Date.now()
             });
+            nameInput.value = ''; // Kutuları temizle
+            messageInput.value = '';
+        } else {
+            alert("Lütfen adınızı ve mesajınızı eksiksiz girin!");
+        }
+    });
 
-            function addMessageToDOM(name, message, date) {
-                const messageCard = document.createElement('div');
-                messageCard.className = 'message-card';
-
-                messageCard.innerHTML = `
-                    <div class="message-header">
-                        ${name} <span class="message-date">${date}</span>
-                    </div>
-                    <div class="message-body">
-                        ${message}
+    // Yorumları anlık olarak ekrana çek ve yazdır
+    onValue(ref(db, 'sergi_yorumlari'), (snapshot) => {
+        commentsList.innerHTML = ''; // Önce listeyi temizle
+        const data = snapshot.val();
+        
+        if(data) {
+            // Yeni yorumlar en üstte görünsün
+            const commentsArray = Object.entries(data).reverse();
+            commentsArray.forEach(([id, comment]) => {
+                const date = new Date(comment.timestamp).toLocaleDateString('tr-TR');
+                
+                // Mevcut sitenin temasını bozmayacak, şeffaf/hafif çerçeveli yorum kartları
+                commentsList.innerHTML += `
+                    <div style="background: rgba(0,0,0,0.03); padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #007bff;">
+                        <div style="font-weight: bold; margin-bottom: 5px;">${comment.name}</div>
+                        <div style="font-size: 0.8em; color: #666; margin-bottom: 10px;">${date}</div>
+                        <div style="line-height: 1.5;">${comment.message}</div>
                     </div>
                 `;
-
-                messagesContainer.prepend(messageCard);
-            }
-        });
-    </script>
-</body>
-</html>
+            });
+        } else {
+            commentsList.innerHTML = '<p>Henüz yorum yapılmamış. İlk düşünceyi sen paylaş!</p>';
+        }
+    });
+</script>
