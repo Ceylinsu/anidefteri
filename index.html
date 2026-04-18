@@ -1,159 +1,784 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bilişim Sergisi Anı Defteri</title>
-    <style>
-        /* TASARIM AYARLARI */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f3;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            max-width: 550px;
-            width: 100%;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        header { text-align: center; margin-bottom: 25px; }
-        h1 { color: #2c3e50; font-size: 24px; margin-bottom: 8px; }
-        p.subtitle { color: #7f8c8d; font-size: 14px; }
-        
-        form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 35px; }
-        input, textarea { 
-            width: 100%; 
-            padding: 12px; 
-            border: 2px solid #edeff0; 
-            border-radius: 8px; 
-            font-size: 15px; 
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-        }
-        input:focus, textarea:focus { border-color: #3498db; outline: none; }
-        
-        button { 
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white; 
-            border: none; 
-            padding: 12px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            font-weight: 600; 
-            transition: transform 0.2s;
-        }
-        button:hover { transform: translateY(-2px); }
-        
-        #comments-list { margin-top: 20px; }
-        .comment-card { 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin-bottom: 15px; 
-            border-left: 5px solid #3498db;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .comment-card h4 { margin: 0 0 5px 0; font-size: 16px; color: #2c3e50; }
-        .comment-card span { font-size: 11px; color: #95a5a6; font-weight: normal; }
-        .comment-card p { margin: 0; font-size: 14px; color: #555; line-height: 1.5; }
-        .no-comment { text-align: center; color: #bdc3c7; font-style: italic; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 Bilişim Sergisi — Anı Defteri</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ─────────────────────────────────────── */
+    :root {
+      --bg:       #0a0a12;
+      --surface:  #12121f;
+      --card:     #1a1a2e;
+      --border:   #2a2a45;
+      --accent:   #00f5c4;
+      --accent2:  #ff6b6b;
+      --accent3:  #ffd93d;
+      --text:     #e8e8f0;
+      --muted:    #6b6b8a;
+      --font-head: 'Syne', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --radius:   12px;
+    }
+
+    /* ── RESET ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATED BG GRID ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.3;
+      pointer-events: none;
+      animation: gridDrift 20s linear infinite;
+    }
+    @keyframes gridDrift {
+      0%   { background-position: 0 0; }
+      100% { background-position: 40px 40px; }
+    }
+
+    /* ── GLOW ───────────────────────────────────────── */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-orb.g1 {
+      width: 600px; height: 600px;
+      background: rgba(0,245,196,0.07);
+      top: -200px; left: -200px;
+      animation: orbFloat1 12s ease-in-out infinite alternate;
+    }
+    .glow-orb.g2 {
+      width: 500px; height: 500px;
+      background: rgba(255,107,107,0.06);
+      bottom: -200px; right: -200px;
+      animation: orbFloat2 15s ease-in-out infinite alternate;
+    }
+    @keyframes orbFloat1 { to { transform: translate(80px, 60px); } }
+    @keyframes orbFloat2 { to { transform: translate(-60px, -80px); } }
+
+    /* ── LAYOUT ─────────────────────────────────────── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 4px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(0,245,196,0.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(0,245,196,0); }
+    }
+    h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* ── STATS BAR ──────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 18px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-chip span { color: var(--accent); font-weight: 700; }
+
+    /* ── FORM ───────────────────────────────────────── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+    }
+    .form-title {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-title .icon { font-size: 22px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media(max-width:560px){ .form-row { grid-template-columns: 1fr; } }
+
+    label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    input, textarea, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      resize: vertical;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,245,196,0.1);
+    }
+    textarea { min-height: 100px; }
+
+    /* EMOJI PICKER */
+    .emoji-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .emoji-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .emoji-btn:hover, .emoji-btn.active {
+      border-color: var(--accent);
+      background: rgba(0,245,196,0.1);
+      transform: scale(1.15);
+    }
+
+    /* RATING STARS */
+    .stars {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .star {
+      font-size: 28px;
+      cursor: pointer;
+      transition: transform .15s;
+      filter: grayscale(1) opacity(0.4);
+    }
+    .star.active, .star:hover { filter: none; transform: scale(1.2); }
+
+    /* SUBMIT BTN */
+    .btn-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,245,196,0.3);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* SUCCESS TOAST */
+    .toast {
+      position: fixed; bottom: 30px; right: 30px;
+      background: var(--accent);
+      color: var(--bg);
+      padding: 14px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all .3s ease;
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── FILTER BAR ─────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0,245,196,0.08);
+    }
+
+    /* ── CARDS ──────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .yorum-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: cardIn .4s ease both;
+    }
+    @keyframes cardIn {
+      from { opacity:0; transform: translateY(16px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .yorum-card:hover { border-color: color-mix(in srgb, var(--accent) 30%, var(--border)); }
+
+    .card-accent-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .card-avatar {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .card-meta { flex: 1; }
+    .card-name {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .card-info {
+      display: flex;
+      gap: 10px;
+      margin-top: 3px;
+      flex-wrap: wrap;
+    }
+    .card-tag {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    .card-tag.role {
+      color: var(--accent3);
+      border: 1px solid rgba(255,217,61,0.3);
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .card-stars { font-size: 14px; }
+    .card-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(232,232,240,0.85);
+      padding-left: 16px;
+      border-left: 2px solid var(--border);
+    }
+    .card-emoji {
+      position: absolute;
+      right: 20px; bottom: 16px;
+      font-size: 28px;
+      opacity: 0.4;
+    }
+
+    /* ── EMPTY STATE ────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .big { font-size: 50px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── LOADING ────────────────────────────────────── */
+    .spinner {
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+    }
+    .spinner::after {
+      content: '';
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SECTION TITLE ──────────────────────────────── */
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── CONFIG WARNING ─────────────────────────────── */
+    .config-warning {
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.4);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 30px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .config-warning strong { color: var(--accent2); display: block; margin-bottom: 6px; font-size: 15px; }
+    .config-warning code {
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>🚀 Bilişim Sergisi</h1>
-            <p class="subtitle">Dijital Anı Defterine Hoş Geldiniz</p>
-        </header>
+<div class="glow-orb g1"></div>
+<div class="glow-orb g2"></div>
 
-        <form id="comment-form">
-            <input type="text" id="name" placeholder="Adınız Soyadınız" required>
-            <textarea id="message" placeholder="Sergimiz hakkındaki yorumunuz..." rows="3" required></textarea>
-            <button type="submit">Mesajı Gönder</button>
-        </form>
+<div class="container">
 
-        <hr style="border: 0; height: 1px; background: #eee;">
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="badge">BİLİŞİM SERGİSİ 2025</div>
+    <h1>Anı Defteri</h1>
+    <p class="subtitle">Sergimizi ziyaret ettiğiniz için teşekkürler — düşüncelerinizi bırakın!</p>
+  </header>
 
-        <div id="comments-section">
-            <h2 style="font-size: 18px; color: #2c3e50;">Ziyaretçi Notları</h2>
-            <div id="comments-list">
-                <p class="no-comment">Notlar yükleniyor...</p>
-            </div>
-        </div>
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-chip">👥 Toplam Ziyaretçi: <span id="totalCount">—</span></div>
+    <div class="stat-chip">⭐ Ortalama Puan: <span id="avgRating">—</span></div>
+    <div class="stat-chip">🕐 Son Yorum: <span id="lastTime">—</span></div>
+  </div>
+
+  <!-- CONFIG WARNING (only shows when not configured) -->
+  <div class="config-warning" id="configWarning" style="display:none">
+    <strong>⚠️ Yapılandırma Gerekli</strong>
+    Bu siteyi çalıştırmak için <code>JSONBIN_BIN_ID</code> ve <code>JSONBIN_API_KEY</code> değerlerini
+    aşağıdaki script bölümünde güncellemeniz gerekiyor.
+    JSONBin.io'dan ücretsiz hesap açıp Bin ID ve Master Key'i alın.
+  </div>
+
+  <!-- ── FORM ── -->
+  <div class="form-card">
+    <div class="form-title">
+      <span class="icon">✍️</span> Yorumunuzu Bırakın
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <div class="form-row">
+      <div>
+        <label>Adınız</label>
+        <input id="inputAd" type="text" placeholder="Adınız Soyadınız" maxlength="50" />
+      </div>
+      <div>
+        <label>Rolünüz</label>
+        <select id="inputRol">
+          <option value="">Seçiniz...</option>
+          <option value="Öğrenci">👩‍🎓 Öğrenci</option>
+          <option value="Veli">👨‍👩‍👧 Veli</option>
+          <option value="Öğretmen">👩‍🏫 Öğretmen</option>
+          <option value="Davetli">🎟️ Davetli</option>
+          <option value="Diğer">🙋 Diğer</option>
+        </select>
+      </div>
+    </div>
 
-        // Senin sağladığın Firebase yapılandırması
-        const firebaseConfig = {
-          apiKey: "AIzaSyC9RHNX5sSnAFq8-kHVht4T97I5nrB8S-k",
-          authDomain: "hatira-e7d4c.firebaseapp.com",
-          projectId: "hatira-e7d4c",
-          storageBucket: "hatira-e7d4c.firebasestorage.app",
-          messagingSenderId: "718092389367",
-          appId: "1:718092389367:web:c5d694aa767f871cc97cf2",
-          // Not: Realtime Database kullandığımız için databaseURL gerekebilir. 
-          // Eğer hata alırsan Firebase panelinden databaseURL'yi buraya ekleyebilirsin.
-          databaseURL: "https://hatira-e7d4c-default-rtdb.firebaseio.com" 
-        };
+    <div style="margin-bottom:14px">
+      <label>Sergiyi Değerlendirin</label>
+      <div class="stars" id="starsContainer">
+        <span class="star" data-val="1">⭐</span>
+        <span class="star" data-val="2">⭐</span>
+        <span class="star" data-val="3">⭐</span>
+        <span class="star" data-val="4">⭐</span>
+        <span class="star" data-val="5">⭐</span>
+      </div>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const commentsRef = ref(db, 'ziyaretci_notlari');
+    <div style="margin-bottom:14px">
+      <label>Mesajınız</label>
+      <textarea id="inputMesaj" placeholder="Sergi hakkında düşüncelerinizi paylaşın..." maxlength="500"></textarea>
+      <div style="text-align:right; font-size:11px; color:var(--muted); margin-top:4px">
+        <span id="charCount">0</span>/500
+      </div>
+    </div>
 
-        const form = document.getElementById('comment-form');
-        const commentsList = document.getElementById('comments-list');
+    <div style="margin-bottom:6px">
+      <label>Duygu Durumunuz</label>
+      <div class="emoji-row" id="emojiRow">
+        <button class="emoji-btn" data-emoji="🤩">🤩</button>
+        <button class="emoji-btn" data-emoji="😊">😊</button>
+        <button class="emoji-btn" data-emoji="🤔">🤔</button>
+        <button class="emoji-btn" data-emoji="💡">💡</button>
+        <button class="emoji-btn" data-emoji="🚀">🚀</button>
+        <button class="emoji-btn" data-emoji="👾">👾</button>
+        <button class="emoji-btn" data-emoji="🎯">🎯</button>
+        <button class="emoji-btn" data-emoji="❤️">❤️</button>
+      </div>
+    </div>
 
-        // Formu Gönderince Veritabanına Yaz
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const nameVal = document.getElementById('name').value;
-            const messageVal = document.getElementById('message').value;
+    <button class="btn-submit" id="btnGonder" onclick="yorumGonder()">
+      💬 Yorumu Gönder
+    </button>
+  </div>
 
-            push(commentsRef, {
-                name: nameVal,
-                message: messageVal,
-                date: new Date().toLocaleString('tr-TR')
-            });
+  <!-- ── YORUMLAR ── -->
+  <div class="section-title">Ziyaretçi Yorumları</div>
 
-            form.reset();
-            alert("Harika! Notun anı defterine eklendi.");
-        });
+  <div class="filter-bar">
+    <span class="filter-label">FİLTRE:</span>
+    <button class="filter-btn active" onclick="filterYorumlar('tumu', this)">Tümü</button>
+    <button class="filter-btn" onclick="filterYorumlar('Öğrenci', this)">👩‍🎓 Öğrenci</button>
+    <button class="filter-btn" onclick="filterYorumlar('Öğretmen', this)">👩‍🏫 Öğretmen</button>
+    <button class="filter-btn" onclick="filterYorumlar('Veli', this)">👨‍👩‍👧 Veli</button>
+    <button class="filter-btn" onclick="filterYorumlar('5yildiz', this)">⭐ 5 Yıldız</button>
+  </div>
 
-        // Veritabanından Verileri Çek ve Listele
-        onValue(commentsRef, (snapshot) => {
-            commentsList.innerHTML = '';
-            const data = snapshot.val();
+  <div id="yorumContainer">
+    <div class="spinner"></div>
+  </div>
 
-            if (data) {
-                // Mesajları diziye çevirip en yeni en üstte olacak şekilde sırala
-                const entries = Object.values(data).reverse();
-                entries.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'comment-card';
-                    div.innerHTML = `
-                        <h4>${item.name} <span>• ${item.date}</span></h4>
-                        <p>${item.message}</p>
-                    `;
-                    commentsList.appendChild(div);
-                });
-            } else {
-                commentsList.innerHTML = '<p class="no-comment">Henüz hiç not bırakılmamış. İlk yazan sen ol!</p>';
-            }
-        });
-    </script>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Yorumunuz eklendi!</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════
+  //  🔧 BURAYA JSONBin.io BİLGİLERİNİZİ YAZIN
+  // ═══════════════════════════════════════════════════════
+  const JSONBIN_BIN_ID  = "69e3d53faaba88219712c8b0";
+  const JSONBIN_API_KEY = "$2a$10$GUfuvvYMEDsfEoYbSQP.sevnvChH1GLS3IsH0DP9T/nAJUhLidy1C";
+  // ═══════════════════════════════════════════════════════
+
+  const BASE_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+  const HEADERS  = {
+    "Content-Type": "application/json",
+    "X-Master-Key": JSONBIN_API_KEY,
+    "X-Bin-Versioning": "false"
+  };
+
+  let seciliPuan  = 0;
+  let seciliEmoji = "";
+  let tumYorumlar = [];
+  let aktifFilter = "tumu";
+
+
+
+  // ── Stars ─────────────────────────────────────────────
+  document.querySelectorAll(".star").forEach(s => {
+    s.addEventListener("click", () => {
+      seciliPuan = +s.dataset.val;
+      document.querySelectorAll(".star").forEach((st, i) => {
+        st.classList.toggle("active", i < seciliPuan);
+      });
+    });
+  });
+
+  // ── Emoji ─────────────────────────────────────────────
+  document.querySelectorAll(".emoji-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const e = btn.dataset.emoji;
+      seciliEmoji = seciliEmoji === e ? "" : e;
+      document.querySelectorAll(".emoji-btn").forEach(b =>
+        b.classList.toggle("active", b.dataset.emoji === seciliEmoji)
+      );
+    });
+  });
+
+  // ── Char counter ─────────────────────────────────────
+  document.getElementById("inputMesaj").addEventListener("input", e => {
+    document.getElementById("charCount").textContent = e.target.value.length;
+  });
+
+  // ── Colors for cards ─────────────────────────────────
+  const COLORS = ["#00f5c4","#ff6b6b","#ffd93d","#a78bfa","#38bdf8","#fb923c"];
+  const pickColor = (str) => COLORS[str.charCodeAt(0) % COLORS.length];
+  const pickBg    = (col) => col + "22";
+  const starStr   = (n)   => "⭐".repeat(n) + "☆".repeat(5-n);
+  const timeAgo   = (ts)  => {
+    const d = (Date.now() - ts) / 1000;
+    if (d < 60)    return "az önce";
+    if (d < 3600)  return `${Math.floor(d/60)} dk önce`;
+    if (d < 86400) return `${Math.floor(d/3600)} sa önce`;
+    return new Date(ts).toLocaleDateString("tr-TR");
+  };
+
+  // ── Render card ───────────────────────────────────────
+  function renderCard(y, delay=0) {
+    const col  = pickColor(y.ad || "A");
+    const bg   = pickBg(col);
+    const init = (y.ad || "?")[0].toUpperCase();
+    return `
+      <div class="yorum-card" style="animation-delay:${delay}ms">
+        <div class="card-accent-bar" style="background:${col}"></div>
+        <div class="card-header">
+          <div class="card-avatar" style="background:${bg}; color:${col}">${init}</div>
+          <div class="card-meta">
+            <div class="card-name">${escHtml(y.ad)}</div>
+            <div class="card-info">
+              ${y.rol ? `<span class="card-tag role">${y.rol}</span>` : ""}
+              <span class="card-tag">${timeAgo(y.zaman)}</span>
+            </div>
+          </div>
+          <div class="card-stars">${y.puan ? starStr(y.puan) : ""}</div>
+        </div>
+        <p class="card-text">${escHtml(y.mesaj)}</p>
+        ${y.emoji ? `<div class="card-emoji">${y.emoji}</div>` : ""}
+      </div>`;
+  }
+
+  function escHtml(str="") {
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // ── Render list ───────────────────────────────────────
+  function renderList(yorumlar) {
+    const el = document.getElementById("yorumContainer");
+    if (!yorumlar.length) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="big">📭</div>
+          <p>Henüz bu filtrede yorum yok.</p>
+        </div>`;
+      return;
+    }
+    el.innerHTML = `<div class="cards-grid">${
+      [...yorumlar].reverse().map((y,i) => renderCard(y, i*60)).join("")
+    }</div>`;
+  }
+
+  // ── Filter ───────────────────────────────────────────
+  function filterYorumlar(fil, btn) {
+    aktifFilter = fil;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    let liste = tumYorumlar;
+    if (fil === "5yildiz") liste = liste.filter(y => y.puan === 5);
+    else if (fil !== "tumu") liste = liste.filter(y => y.rol === fil);
+    renderList(liste);
+  }
+
+  // ── Stats ─────────────────────────────────────────────
+  function updateStats() {
+    document.getElementById("totalCount").textContent = tumYorumlar.length;
+
+    const puanlilar = tumYorumlar.filter(y => y.puan);
+    if (puanlilar.length) {
+      const ort = puanlilar.reduce((s,y)=>s+y.puan,0) / puanlilar.length;
+      document.getElementById("avgRating").textContent = ort.toFixed(1) + " ⭐";
+    } else {
+      document.getElementById("avgRating").textContent = "—";
+    }
+
+    if (tumYorumlar.length) {
+      const son = Math.max(...tumYorumlar.map(y=>y.zaman));
+      document.getElementById("lastTime").textContent = timeAgo(son);
+    }
+  }
+
+  // ── Load data ─────────────────────────────────────────
+  async function yukle() {
+    try {
+      const res  = await fetch(BASE_URL + "/latest", { headers: HEADERS });
+      const data = await res.json();
+      tumYorumlar = data.record?.yorumlar || [];
+      updateStats();
+      renderList(tumYorumlar);
+    } catch(e) {
+      document.getElementById("yorumContainer").innerHTML = `
+        <div class="empty-state">
+          <div class="big">⚠️</div>
+          <p>Veriler yüklenemedi. API Key veya Bin ID'yi kontrol edin.</p>
+        </div>`;
+    }
+  }
+
+  // ── Submit ────────────────────────────────────────────
+  async function yorumGonder() {
+    const ad     = document.getElementById("inputAd").value.trim();
+    const rol    = document.getElementById("inputRol").value;
+    const mesaj  = document.getElementById("inputMesaj").value.trim();
+
+    if (!ad)    return alert("Lütfen adınızı girin.");
+    if (!mesaj) return alert("Lütfen bir mesaj yazın.");
+
+    const btn = document.getElementById("btnGonder");
+    btn.disabled = true;
+    btn.textContent = "⏳ Gönderiliyor...";
+
+    const yeniYorum = {
+      ad, rol, mesaj,
+      puan:  seciliPuan || 0,
+      emoji: seciliEmoji,
+      zaman: Date.now()
+    };
+
+    try {
+      // fetch current
+      const res1 = await fetch(BASE_URL + "/latest", { headers: HEADERS });
+      const data = await res1.json();
+      const liste = data.record?.yorumlar || [];
+      liste.push(yeniYorum);
+
+      // update
+      await fetch(BASE_URL, {
+        method: "PUT",
+        headers: HEADERS,
+        body: JSON.stringify({ yorumlar: liste })
+      });
+
+      tumYorumlar = liste;
+      updateStats();
+      renderList(tumYorumlar);
+
+      // reset form
+      document.getElementById("inputAd").value = "";
+      document.getElementById("inputRol").value = "";
+      document.getElementById("inputMesaj").value = "";
+      document.getElementById("charCount").textContent = "0";
+      seciliPuan = 0;
+      seciliEmoji = "";
+      document.querySelectorAll(".star").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("active"));
+
+      showToast("✅ Yorumunuz eklendi!");
+    } catch(e) {
+      alert("Hata oluştu: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "💬 Yorumu Gönder";
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  yukle();
+</script>
 </body>
 </html>
+
