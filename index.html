@@ -131,13 +131,13 @@
     .card-tag.role{color:var(--accent3);border:1px solid rgba(255,217,61,.3);padding:2px 8px;border-radius:99px;}
     .card-stars{font-size:14px;white-space:nowrap;}
     .card-text{font-size:14px;line-height:1.8;color:rgba(232,232,240,.85);padding-left:16px;border-left:2px solid var(--border);}
-    .card-emoji{position:absolute;right:20px;bottom:16px;font-size:28px;opacity:.4;pointer-events:none;}
+    .card-emoji{display:inline-flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:2px 10px;margin-left:6px;vertical-align:middle;}
 
     /* ADMIN DELETE */
     .btn-delete{position:absolute;top:14px;right:14px;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);color:#ff6b6b;border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .18s;display:none;z-index:5;}
     .btn-delete:hover{background:rgba(255,107,107,.28);}
     .admin-mode .btn-delete{display:block;}
-    .admin-mode .card-emoji{right:76px;}
+
 
     /* EMPTY / SPINNER */
     .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
@@ -244,6 +244,7 @@
         </select>
       </div>
     </div>
+
     <div style="margin-bottom:14px">
       <label>Sergiyi Değerlendirin</label>
       <div class="stars" id="starsContainer">
@@ -347,7 +348,7 @@
       '<div class="card-header">'+
         '<div class="card-avatar" style="background:'+bg+';color:'+col+'">'+init+'</div>'+
         '<div class="card-meta">'+
-          '<div class="card-name">'+escHtml(y.ad)+'</div>'+
+          '<div class="card-name">'+escHtml(y.ad)+(y.emoji?'<span class="card-emoji">'+y.emoji+'</span>':'')+'</div>'+
           '<div class="card-info">'+
             (y.rol?'<span class="card-tag role">'+y.rol+'</span>':'')+
             '<span class="card-tag">'+timeAgo(y.zaman)+'</span>'+
@@ -356,7 +357,6 @@
         '<div class="card-stars">'+(y.puan?starStr(y.puan):"")+'</div>'+
       '</div>'+
       '<p class="card-text">'+escHtml(y.mesaj)+'</p>'+
-      (y.emoji?'<div class="card-emoji">'+y.emoji+'</div>':'')+
     '</div>';
   }
 
@@ -440,9 +440,8 @@
     btn.disabled=true;btn.textContent="⏳ Gönderiliyor...";
     var yeni={ad:ad,rol:rol,mesaj:mesaj,puan:seciliPuan||0,emoji:seciliEmoji,zaman:Date.now(),cihazToken:CIHAZ_TOKEN};
     try{
-      var res=await fetch(BASE_URL+"/latest",{headers:HEADERS});
-      var data=await res.json();
-      var liste=((data.record&&data.record.yorumlar)?data.record.yorumlar:[]).concat([yeni]);
+      // Bellekteki veriyi kullan — ekstra GET isteği yok, 2x hızlı
+      var liste=tumYorumlar.concat([yeni]);
       await kaydet(liste);
 
 
