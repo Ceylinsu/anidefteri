@@ -265,7 +265,6 @@
         <button class="emoji-btn" data-emoji="🤩">🤩</button>
         <button class="emoji-btn" data-emoji="😊">😊</button>
         <button class="emoji-btn" data-emoji="🤔">🤔</button>
-        <button class="emoji-btn" data-emoji="💡">💡</button>
         <button class="emoji-btn" data-emoji="🚀">🚀</button>
         <button class="emoji-btn" data-emoji="👾">👾</button>
         <button class="emoji-btn" data-emoji="🎯">🎯</button>
@@ -423,6 +422,13 @@
     var mesaj=document.getElementById("inputMesaj").value.trim();
     if(!ad){alert("Lütfen adınızı girin.");return;}
     if(!mesaj){alert("Lütfen bir mesaj yazın.");return;}
+
+    // Aynı cihazdan tekrar yorum yapmasın
+    if(localStorage.getItem("yorumYapildi") === "1"){
+      alert("Bu cihazdan daha önce yorum yapılmış.\nHer cihazdan yalnızca bir yorum bırakılabilir.");
+      return;
+    }
+
     var btn=document.getElementById("btnGonder");
     btn.disabled=true;btn.textContent="⏳ Gönderiliyor...";
     var yeni={ad:ad,rol:rol,mesaj:mesaj,puan:seciliPuan||0,emoji:seciliEmoji,zaman:Date.now()};
@@ -431,6 +437,10 @@
       var data=await res.json();
       var liste=((data.record&&data.record.yorumlar)?data.record.yorumlar:[]).concat([yeni]);
       await kaydet(liste);
+
+      // Cihazı işaretle
+      localStorage.setItem("yorumYapildi", "1");
+
       var filListe=tumYorumlar;
       if(aktifFilter==="5yildiz") filListe=filListe.filter(function(y){return y.puan===5;});
       else if(aktifFilter!=="tumu") filListe=filListe.filter(function(y){return y.rol===aktifFilter;});
@@ -464,6 +474,7 @@
     if(!confirm("TÜM yorumları silmek istediğinize emin misiniz?\nBu işlem geri alınamaz!"))return;
     if(!confirm("Son onay: Tüm veriler silinecek. Devam edilsin mi?"))return;
     await kaydet([]);
+    localStorage.removeItem("yorumYapildi");
     renderList([]);
     showToast("♻️ Tüm yorumlar sıfırlandı.");
   }
